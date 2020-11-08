@@ -3,19 +3,7 @@ import { APIGatewayProxyHandler } from 'aws-lambda';
 import { defaultHeaders } from '../default-headers';
 import { Client } from 'pg';
 import { StatusCodes } from 'http-status-codes';
-
-const { PG_HOST, PG_PORT, PG_DATABASE, PG_USERNAME, PG_PASSWORD } = process.env;
-const dbOptions = {
-  host: PG_HOST,
-  port: +PG_PORT,
-  database: PG_DATABASE,
-  user: PG_USERNAME,
-  password: PG_PASSWORD,
-  ssl: {
-    rejectUnauthorized: false // to avoid warning in this example
-  },
-  connectionTimeoutMillis: 5000 // time in millisecond for termination of the database query
-};
+import { dbConfig } from '../pg.config';
 
 export const createProduct: APIGatewayProxyHandler = async (event) => {
   console.log('Lambda invocation with event: ', event);
@@ -23,6 +11,7 @@ export const createProduct: APIGatewayProxyHandler = async (event) => {
   try {
     const product = JSON.parse(event.body) as ProductDTO;
     console.log('Product DTO: ', product);
+
     if (product && product.title && product.price) {
       return await createProductInDB(product);
     } else {
@@ -42,7 +31,7 @@ export const createProduct: APIGatewayProxyHandler = async (event) => {
 };
 
 async function createProductInDB(product: ProductDTO) {
-  const client = new Client(dbOptions);
+  const client = new Client(dbConfig);
   await client.connect();
   await client.query(
     'INSERT INTO products (title, description, price) VALUES ($1, $2, $3)',

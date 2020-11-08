@@ -1,7 +1,9 @@
-import { products } from '../products';
 import { APIGatewayProxyHandler } from 'aws-lambda';
 import { defaultHeaders } from '../default-headers';
 import { StatusCodes } from 'http-status-codes';
+import { Client } from 'pg';
+import { dbConfig } from '../pg.config';
+import { Product } from '../product.model';
 
 export const getProductById: APIGatewayProxyHandler = async (event) => {
   console.log('Lambda invocation with event: ', event);
@@ -10,11 +12,18 @@ export const getProductById: APIGatewayProxyHandler = async (event) => {
     const { productId } = event.pathParameters;
     console.log('ID of requested product: ', productId);
 
-    const product = products.find(p => p.id === +productId);
-    if (product) {
+    const client = new Client(dbConfig);
+    await client.connect();
+    const result = await client.query<Product>(
+      `SELECT id, title, description, price, count FROM products p
+      JOIN stocks s on p.id = s.product_id
+      WHERE id=$1`,
+      [productId]
+    );
+    if (result.rowCount) {
       return {
         statusCode: StatusCodes.OK,
-        body: JSON.stringify(product),
+        body: JSON.stringify(result.rows[0]),
         headers: defaultHeaders
       };
     };
