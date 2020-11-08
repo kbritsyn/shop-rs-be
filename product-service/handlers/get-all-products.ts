@@ -13,7 +13,7 @@ export const getAllProducts: APIGatewayProxyHandler = async (event) => {
     await client.connect();
     const result = await client.query<Product>(
       `SELECT id, title, description, price, count FROM products p
-      JOIN stocks s on p.id = s.product_id`
+      LEFT JOIN stocks s on p.id = s.product_id`
     );
     return {
       statusCode: StatusCodes.OK,
