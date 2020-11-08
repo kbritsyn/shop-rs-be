@@ -3,6 +3,7 @@ import { APIGatewayProxyHandler } from 'aws-lambda';
 import { defaultHeaders } from '../default-headers';
 import { Client } from 'pg';
 import { StatusCodes } from 'http-status-codes';
+
 const { PG_HOST, PG_PORT, PG_DATABASE, PG_USERNAME, PG_PASSWORD } = process.env;
 const dbOptions = {
   host: PG_HOST,
@@ -19,13 +20,11 @@ const dbOptions = {
 export const createProduct: APIGatewayProxyHandler = async (event) => {
   console.log('Lambda invocation with event: ', event);
 
-  const client = new Client(dbOptions);
-
   try {
     const product = JSON.parse(event.body) as ProductDTO;
     console.log('Product DTO: ', product);
     if (product && product.title && product.price) {
-      return await createProductInDB(client, product);
+      return await createProductInDB(product);
     } else {
       return {
         statusCode: StatusCodes.BAD_REQUEST,
@@ -42,8 +41,8 @@ export const createProduct: APIGatewayProxyHandler = async (event) => {
   }
 };
 
-
-async function createProductInDB(client: Client, product: ProductDTO) {
+async function createProductInDB(product: ProductDTO) {
+  const client = new Client(dbOptions);
   await client.connect();
   await client.query(
     'INSERT INTO products (title, description, price) VALUES ($1, $2, $3)',
@@ -55,4 +54,3 @@ async function createProductInDB(client: Client, product: ProductDTO) {
     headers: defaultHeaders
   };
 }
-
