@@ -1,0 +1,28 @@
+{
+  "name": "shop-rs-be",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "@babel/core": "^7.12.3",
+    "@babel/preset-env": "^7.12.1",
+    "@babel/preset-typescript": "^7.12.1",
+    "@types/jest": "^26.0.15",
+    "babel-jest": "^26.6.2",
+    "jest": "^26.6.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kbritsyn/shop-rs-be.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kbritsyn/shop-rs-be/issues"
+  },
+  "homepage": "https://github.com/kbritsyn/shop-rs-be#readme"
+}
