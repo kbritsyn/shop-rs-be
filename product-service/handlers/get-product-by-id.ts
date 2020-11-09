@@ -8,11 +8,12 @@ import { Product } from '../product.model';
 export const getProductById: APIGatewayProxyHandler = async (event) => {
   console.log('Lambda invocation with event: ', event);
 
+  const client = new Client(dbConfig);
+
   try {
     const { productId } = event.pathParameters;
     console.log('ID of requested product: ', productId);
 
-    const client = new Client(dbConfig);
     await client.connect();
     const result = await client.query<Product>(
       `SELECT id, title, description, price, count FROM products p
@@ -39,5 +40,7 @@ export const getProductById: APIGatewayProxyHandler = async (event) => {
       body: JSON.stringify({ message: error }),
       headers: defaultHeaders
     };
+  } finally {
+    client.end();
   }
 };

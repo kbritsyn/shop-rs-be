@@ -8,12 +8,14 @@ import { dbConfig } from '../pg.config';
 export const getAllProducts: APIGatewayProxyHandler = async (event) => {
   console.log('Lambda invocation with event: ', event);
 
+  const client = new Client(dbConfig);
+
   try {
-    const client = new Client(dbConfig);
     await client.connect();
     const result = await client.query<Product>(
       `SELECT id, title, description, price, count FROM products p
-      LEFT JOIN stocks s on p.id = s.product_id`
+      LEFT JOIN stocks s on p.id = s.product_id
+      ORDER BY title`
     );
     return {
       statusCode: StatusCodes.OK,
@@ -25,6 +27,8 @@ export const getAllProducts: APIGatewayProxyHandler = async (event) => {
       statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
       body: JSON.stringify({ message: error }),
       headers: defaultHeaders
-    };
+    }
+  } finally {
+    client.end();
   }
 };
