@@ -19,4 +19,4 @@ insert into products(title, description, price) values
     ('Product5', 'description5', 3400), 
     ('Product6', null, 1200);
 
-insert into stock select id, floor(random() * 100 + 1)::int from products;
+insert into stocks select id, floor(random() * 100 + 1)::int from products;
