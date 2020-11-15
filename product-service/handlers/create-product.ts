@@ -1,4 +1,4 @@
-import { ProductDTO } from './../product.model';
+import { ProductDTO, Product } from './../product.model';
 import { APIGatewayProxyHandler } from 'aws-lambda';
 import { defaultHeaders } from '../default-headers';
 import { Client } from 'pg';
@@ -38,12 +38,18 @@ async function createProductInDB(client: Client, product: ProductDTO) {
   try {
     await client.connect();
     await client.query('BEGIN');
-    await client.query(
-      'INSERT INTO products (title, description, price) VALUES ($1, $2, $3)',
+    const insertResult = await client.query<Product>(
+      'INSERT INTO products (title, description, price) VALUES ($1, $2, $3) RETURNING id',
       [product.title, product.description, product.price]
     );
+    const insertedProductId = insertResult.rows?.[0]?.id;
+    console.log('New product id:', insertedProductId);
+
+    await client.query(
+      'INSERT INTO stocks (product_id, count) VALUES ($1, $2)',
+      [insertedProductId, +product.count]
+    );
     await client.query('COMMIT');
-    await client.end();
     return {
       statusCode: StatusCodes.OK,
       body: JSON.stringify({ message: 'Product created' }),

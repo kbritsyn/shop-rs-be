@@ -2,6 +2,7 @@ export interface ProductDTO {
   title: string;
   description: string;
   price: number;
+  count: string;
 }
 
 export interface Product {
@@ -9,5 +10,11 @@ export interface Product {
   title: string;
   description: string;
   price: number;
+}
+
+export interface ProductCount {
+  id: string;
   count: number;
 }
+
+export type ProductWithCount = Product & ProductCount;
