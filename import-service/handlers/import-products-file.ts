@@ -2,14 +2,14 @@ import { defaultHeaders } from './../../default-headers';
 import { StatusCodes } from 'http-status-codes';
 import { APIGatewayProxyHandler } from 'aws-lambda';
 import { S3 } from 'aws-sdk';
+import { BUCKET_NAME, REGION } from '../constants';
 
-const BUCKET_NAME = process.env.BUCKET_NAME;
 
 export const importProductsFile: APIGatewayProxyHandler = async (event) => {
   console.log('Lambda invocation with event: ', event);
 
   try {
-    const s3 = new S3({ region: process.env.AWS_REGION });
+    const s3 = new S3({ region: REGION, signatureVersion: 'v4' });
 
     const fileName = event.queryStringParameters.name;
     const signedUrlParams = {
