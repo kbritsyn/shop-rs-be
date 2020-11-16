@@ -29,7 +29,10 @@ export const importFileParser: S3Handler = async (event) => {
             console.log(error.message);
             reject(error);
           })
-          .on('end', async () => await onStreamEnd(s3, fileName, resolve));
+          .on('end', async () => {
+            await onStreamEnd(s3, fileName);
+            resolve();
+          });
       });
     });
 
@@ -40,7 +43,7 @@ export const importFileParser: S3Handler = async (event) => {
   }
 };
 
-async function onStreamEnd(s3: S3, fileName: string, resolve: (value?: unknown) => void) {
+async function onStreamEnd(s3: S3, fileName: string) {
   console.log('Data end');
 
   await s3.copyObject({
@@ -49,13 +52,10 @@ async function onStreamEnd(s3: S3, fileName: string, resolve: (value?: unknown) 
     Key: fileName.replace('uploaded', 'parsed')
   }).promise();
 
-
   await s3.deleteObject({
     Bucket: BUCKET_NAME,
     Key: fileName
   }).promise();
 
   console.log(`Object was moved into 'parsed' folder`);
-  resolve();
 }
-
