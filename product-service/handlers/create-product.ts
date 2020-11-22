@@ -1,6 +1,6 @@
 import { ProductDTO, Product } from './../product.model';
 import { APIGatewayProxyHandler } from 'aws-lambda';
-import { defaultHeaders } from '../default-headers';
+import { defaultHeaders } from '../../default-headers';
 import { Client } from 'pg';
 import { StatusCodes } from 'http-status-codes';
 import { dbConfig } from '../pg.config';

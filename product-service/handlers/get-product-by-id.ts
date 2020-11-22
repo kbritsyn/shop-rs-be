@@ -1,5 +1,5 @@
 import { APIGatewayProxyHandler } from 'aws-lambda';
-import { defaultHeaders } from '../default-headers';
+import { defaultHeaders } from '../../default-headers';
 import { StatusCodes } from 'http-status-codes';
 import { Client } from 'pg';
 import { dbConfig } from '../pg.config';
