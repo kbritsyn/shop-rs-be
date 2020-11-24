@@ -21,6 +21,7 @@ const serverlessConfiguration: Serverless = {
     },
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
+      SQS_URL: '${cf.eu-west-1:product-service-dev.SQSUrl}'
     },
     region: 'eu-west-1',
     stage: 'dev',
@@ -34,6 +35,10 @@ const serverlessConfiguration: Serverless = {
         Effect: 'Allow',
         Action: 's3:*',
         Resource: 'arn:aws:s3:::rs-image-host/*'
+      }, {
+        Effect: 'Allow',
+        Action: 'sqs:*',
+        Resource: ['${cf:product-service-dev.SQSArn}']
       }
     ]
   },

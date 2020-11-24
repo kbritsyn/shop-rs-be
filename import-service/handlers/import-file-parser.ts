@@ -1,7 +1,7 @@
 import { S3Handler } from 'aws-lambda';
-import { S3 } from 'aws-sdk';
+import { S3, SQS } from 'aws-sdk';
 import * as csv from 'csv-parser';
-import { BUCKET_NAME, REGION } from '../constants';
+import { BUCKET_NAME, REGION, SQS_URL } from '../constants';
 
 
 export const importFileParser: S3Handler = async (event) => {
@@ -9,6 +9,7 @@ export const importFileParser: S3Handler = async (event) => {
 
   try {
     const s3 = new S3({ region: REGION, signatureVersion: 'v4' });
+    const sqs = new SQS({ region: REGION });
 
     const eventCompletionPromises = event.Records.map(async record => {
       const fileName = record.s3.object.key;
@@ -24,6 +25,7 @@ export const importFileParser: S3Handler = async (event) => {
         s3Stream.pipe(csv())
           .on('data', data => {
             console.log(data);
+            sendMessage(sqs, data);
           })
           .on('error', error => {
             console.log(error.message);
@@ -42,6 +44,18 @@ export const importFileParser: S3Handler = async (event) => {
     console.log(error);
   }
 };
+
+function sendMessage(sqs: SQS, data: any) {
+  sqs.sendMessage({
+    MessageBody: JSON.stringify(data),
+    QueueUrl: SQS_URL
+  }, error => {
+    if (error) {
+      console.log('Failed to send SQS message: ', error);
+    }
+    console.log('Message sent');
+  });
+}
 
 async function onStreamEnd(s3: S3, fileName: string) {
   console.log('Data end');

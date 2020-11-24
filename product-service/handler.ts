@@ -1,3 +1,4 @@
+import { catalogBatchProcess } from './handlers/catalog-batch-process';
 import { createProduct } from './handlers/create-product';
 import 'source-map-support/register';
 
@@ -7,5 +8,6 @@ import { getAllProducts } from './handlers/get-all-products';
 export {
   getProductById,
   getAllProducts,
-  createProduct
+  createProduct,
+  catalogBatchProcess
 }
