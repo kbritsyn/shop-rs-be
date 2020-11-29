@@ -42,6 +42,32 @@ const serverlessConfiguration: Serverless = {
       }
     ]
   },
+  resources: {
+    Resources: {
+      GatewayResponse: {
+        Type: 'AWS::ApiGateway::GatewayResponse',
+        Properties: {
+          ResponseType: 'ACCESS_DENIED',
+          RestApiId: { Ref: 'ApiGatewayRestApi' },
+          ResponseParameters: {
+            'gatewayresponse.header.Access-Control-Allow-Origin': `'*'`,
+            'gatewayresponse.header.Access-Control-Allow-Headers': `'*'`,
+          }
+        }
+      },
+      GatewayResponseUnauthorized: {
+        Type: 'AWS::ApiGateway::GatewayResponse',
+        Properties: {
+          ResponseType: 'UNAUTHORIZED',
+          RestApiId: { Ref: 'ApiGatewayRestApi' },
+          ResponseParameters: {
+            'gatewayresponse.header.Access-Control-Allow-Origin': `'*'`,
+            'gatewayresponse.header.Access-Control-Allow-Headers': `'*'`,
+          }
+        }
+      }
+    }
+  },
   functions: {
     importProductsFile: {
       handler: 'handler.importProductsFile',
