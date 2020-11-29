@@ -8,14 +8,19 @@ export const basicAuthorizer: APIGatewayAuthorizerHandler = (event, _, callback)
     return callback('Unauthorized');
   }
 
-  const token = event.authorizationToken.split(' ')[1];
-  const credentials = parseToken(token);
+  try {
+    const token = event.authorizationToken.split(' ')[1];
+    const credentials = parseToken(token);
 
-  const storedUserPassword = process.env[credentials.userName];
-  const effect = storedUserPassword && storedUserPassword === credentials.password ? 'Allow' : 'Deny';
-  const policy = generatePolicy(token, event.methodArn, effect);
+    const storedUserPassword = process.env[credentials.userName];
+    const effect = storedUserPassword && storedUserPassword === credentials.password ? 'Allow' : 'Deny';
+    const policy = generatePolicy(token, event.methodArn, effect);
 
-  return callback(null, policy);
+    return callback(null, policy);
+  } catch (error) {
+    console.log('Error during authorization:', error);
+    return callback('Unauthorized');
+  }
 }
 
 function parseToken(token: string) {
