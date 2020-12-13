@@ -42,6 +42,32 @@ const serverlessConfiguration: Serverless = {
       }
     ]
   },
+  resources: {
+    Resources: {
+      GatewayResponse: {
+        Type: 'AWS::ApiGateway::GatewayResponse',
+        Properties: {
+          ResponseType: 'ACCESS_DENIED',
+          RestApiId: { Ref: 'ApiGatewayRestApi' },
+          ResponseParameters: {
+            'gatewayresponse.header.Access-Control-Allow-Origin': `'*'`,
+            'gatewayresponse.header.Access-Control-Allow-Headers': `'*'`,
+          }
+        }
+      },
+      GatewayResponseUnauthorized: {
+        Type: 'AWS::ApiGateway::GatewayResponse',
+        Properties: {
+          ResponseType: 'UNAUTHORIZED',
+          RestApiId: { Ref: 'ApiGatewayRestApi' },
+          ResponseParameters: {
+            'gatewayresponse.header.Access-Control-Allow-Origin': `'*'`,
+            'gatewayresponse.header.Access-Control-Allow-Headers': `'*'`,
+          }
+        }
+      }
+    }
+  },
   functions: {
     importProductsFile: {
       handler: 'handler.importProductsFile',
@@ -50,6 +76,13 @@ const serverlessConfiguration: Serverless = {
           method: 'get',
           path: 'import',
           cors: true,
+          authorizer: {
+            name: 'tokenAuthorizer',
+            arn: '${cf.eu-west-1:authorization-service-dev.basicAuthorizerArn}',
+            type: 'token',
+            resultTtlInSeconds: 0,
+            identitySource: 'method.request.header.Authorization'
+          },
           request: {
             parameters: {
               querystrings: {
