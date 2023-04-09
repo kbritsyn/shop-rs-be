@@ -1,5 +1,5 @@
 import { APIGatewayProxyHandler } from 'aws-lambda';
-import { products } from '../products';
+import { products } from '../database/products';
 import { defaultHeaders } from '../default-headers';
 
 export const getAllProducts: APIGatewayProxyHandler = async (event) => {
