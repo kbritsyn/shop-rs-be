@@ -11,7 +11,7 @@ export const products = [
     count: 1,
     description: 'Short Product Description2',
     price: 21.4,
-    title: 'New Product2'
+    title: 'Brand New Product!'
   },
   {
     id: 3,
