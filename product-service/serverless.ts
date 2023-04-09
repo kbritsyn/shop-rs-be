@@ -21,7 +21,26 @@ const serverlessConfiguration: Serverless = {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
     },
     region: 'eu-west-1',
-    stage: 'dev'
+    stage: 'dev',
+    iam: {
+      role: {
+        name: 'products-lambda-role',
+        statements: [{
+          Effect: 'Allow',
+          Action: [
+            'dynamodb:DescribeTable',
+            'dynamodb:Query',
+            'dynamodb:Scan',
+            'dynamodb:GetItem',
+            'dynamodb:PutItem',
+            'dynamodb:UpdateItem',
+            'dynamodb:DeleteItem',
+            'dynamodb:BatchWriteItem'
+          ],
+          Resource: "arn:aws:dynamodb:${aws:region}:*:table/*"
+        }]
+      }
+    }
   },
   functions: {
     getAllProducts: {
@@ -50,6 +69,18 @@ const serverlessConfiguration: Serverless = {
                 }
               }
             }
+          }
+        }
+      ]
+    },
+    insertProducts: {
+      handler: 'handler.insertProducts',
+      events: [
+        {
+          http: {
+            method: 'post',
+            path: 'insert-products',
+            cors: true
           }
         }
       ]
