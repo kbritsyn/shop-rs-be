@@ -9,7 +9,6 @@
   "dependencies": {
     "aws-sdk": "^2.792.0",
     "csv-parser": "^2.3.3",
-    "http-status-codes": "^2.1.4",
     "serverless-dotenv-plugin": "^3.1.0",
     "source-map-support": "^0.5.10"
   },

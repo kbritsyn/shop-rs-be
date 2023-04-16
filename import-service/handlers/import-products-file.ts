@@ -1,5 +1,4 @@
 import { defaultHeaders } from './../../default-headers';
-import { StatusCodes } from 'http-status-codes';
 import { APIGatewayProxyHandler } from 'aws-lambda';
 import { S3 } from 'aws-sdk';
 import { BUCKET_NAME, REGION } from '../constants';
@@ -22,13 +21,13 @@ export const importProductsFile: APIGatewayProxyHandler = async (event) => {
     const signedUrl = await s3.getSignedUrlPromise('putObject', signedUrlParams);
 
     return {
-      statusCode: StatusCodes.OK,
+      statusCode: 200,
       headers: defaultHeaders,
       body: JSON.stringify(signedUrl)
     };
   } catch (error) {
     return {
-      statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+      statusCode: 500,
       headers: defaultHeaders,
       body: JSON.stringify({ message: error })
     }
