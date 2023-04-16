@@ -1,64 +1,48 @@
-import { ProductDTO, Product } from './../product.model';
 import { APIGatewayProxyHandler } from 'aws-lambda';
+import { DynamoDB } from 'aws-sdk';
+import { v4 as uuid } from 'uuid'
+import { tableName } from '../constants';
+import { Product } from '../database/product.model';
 import { defaultHeaders } from '../../default-headers';
-import { Client } from 'pg';
-import { StatusCodes } from 'http-status-codes';
-import { dbConfig } from '../pg.config';
 
-export const createProduct: APIGatewayProxyHandler = async (event) => {
-  console.log('Lambda invocation with event: ', event);
+const dynamoClient = new DynamoDB.DocumentClient();
 
-  const client = new Client(dbConfig);
+export const createProduct: APIGatewayProxyHandler = async ({ body }) => {
+    try {
+        console.log(body);
 
-  try {
-    const product = JSON.parse(event.body) as ProductDTO;
-    console.log('Product DTO: ', product);
+        const requestObject: Product | null = body ? JSON.parse(body) : null;
 
-    if (product && product.title && product.price) {
-      return await createProductInDB(client, product);
-    } else {
-      return {
-        statusCode: StatusCodes.BAD_REQUEST,
-        body: JSON.stringify({ message: 'Invalid product' }),
-        headers: defaultHeaders
-      };
+        if (!requestObject || !requestObject.title || !requestObject.price || !requestObject.count) {
+            return {
+                statusCode: 400,
+                body: JSON.stringify({ message: 'Invalid product' }),
+            };
+        }
+        const newProduct: Product = {
+            ...requestObject,
+            id: uuid()
+        }
+    
+        await dynamoClient.put({
+            TableName: tableName,
+            Item: newProduct
+        }).promise();
+    
+        return {
+            statusCode: 200,
+            body: JSON.stringify(newProduct),
+            headers: defaultHeaders
+        };
+    } catch (error) {
+        console.error(error);
+
+        return {
+            statusCode: 500,
+            body: JSON.stringify({ message: 'Internal Server Error' }),
+        };
     }
-  } catch (error) {
-    return {
-      statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-      body: JSON.stringify({ message: error }),
-      headers: defaultHeaders
-    };
-  } finally {
-    client.end();
-  }
-};
-
-async function createProductInDB(client: Client, product: ProductDTO) {
-  try {
-    await client.connect();
-    await client.query('BEGIN');
-    const insertResult = await client.query<Product>(
-      'INSERT INTO products (title, description, price) VALUES ($1, $2, $3) RETURNING id',
-      [product.title, product.description, product.price]
-    );
-    const insertedProductId = insertResult.rows?.[0]?.id;
-    console.log('New product id:', insertedProductId);
-
-    await client.query(
-      'INSERT INTO stocks (product_id, count) VALUES ($1, $2)',
-      [insertedProductId, +product.count]
-    );
-    await client.query('COMMIT');
-    return {
-      statusCode: StatusCodes.OK,
-      body: JSON.stringify({ message: 'Product created' }),
-      headers: defaultHeaders
-    };
-  } catch (error) {
-    await client.query('ROLLBACK');
-    throw error;
-  }
-
 
 }
+
+
