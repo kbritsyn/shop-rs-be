@@ -1,10 +1,9 @@
 import type { Serverless } from 'serverless/aws';
+import { BUCKET_NAME, REGION } from './constants';
 
 const serverlessConfiguration: Serverless = {
-  service: {
-    name: 'import-service',
-  },
-  frameworkVersion: '2',
+  service: 'import-service',
+  frameworkVersion: '3',
   custom: {
     webpack: {
       webpackConfig: './webpack.config.js',
@@ -22,18 +21,18 @@ const serverlessConfiguration: Serverless = {
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
     },
-    region: 'eu-west-1',
+    region: REGION,
     stage: 'dev',
     iamRoleStatements: [
       {
         Effect: 'Allow',
         Action: 's3:ListBucket',
-        Resource: 'arn:aws:s3:::rs-image-host'
+        Resource: `arn:aws:s3:::${BUCKET_NAME}`
       },
       {
         Effect: 'Allow',
         Action: 's3:*',
-        Resource: 'arn:aws:s3:::rs-image-host/*'
+        Resource: `arn:aws:s3:::${BUCKET_NAME}/*`
       }
     ]
   },
@@ -60,11 +59,10 @@ const serverlessConfiguration: Serverless = {
       handler: 'handler.importFileParser',
       events: [{
         s3: {
-          bucket: 'rs-image-host',
+          bucket: BUCKET_NAME,
           event: 's3:ObjectCreated:*',
           rules: [{
-            prefix: 'uploaded/',
-            suffix: ''
+            prefix: 'uploaded/'
           }],
           existing: true
         }

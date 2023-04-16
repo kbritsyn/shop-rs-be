@@ -1,3 +1,3 @@
-export const BUCKET_NAME = process.env.BUCKET_NAME;
+export const BUCKET_NAME = 'kb-products-bucket';
 
-export const REGION = process.env.REGION;
+export const REGION = 'eu-west-1'
