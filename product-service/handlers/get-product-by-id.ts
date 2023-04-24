@@ -1,7 +1,7 @@
 import { APIGatewayProxyHandler } from 'aws-lambda';
 import { DynamoDB } from 'aws-sdk';
 
-import { defaultHeaders } from '../default-headers';
+import { defaultHeaders } from '../../default-headers';
 import { tableName } from '../constants';
 
 const dynamoClient = new DynamoDB.DocumentClient();

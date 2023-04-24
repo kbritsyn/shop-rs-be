@@ -1,5 +1,5 @@
 {
-  "name": "product-service",
+  "name": "import-service",
   "version": "1.0.0",
   "description": "Serverless webpack example using Typescript",
   "main": "handler.js",
@@ -7,17 +7,15 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "serverless-dotenv-plugin": "^3.1.0",
-    "source-map-support": "^0.5.10",
-    "uuid": "^9.0.0"
+    "aws-sdk": "^2.1359.0",
+    "csv-parser": "^2.3.5",
+    "serverless-dotenv-plugin": "^3.12.2",
+    "source-map-support": "^0.5.21"
   },
   "devDependencies": {
-    "aws-sdk": "^2.1353.0",
     "@types/aws-lambda": "^8.10.114",
     "@types/node": "^10.17.60",
-    "@types/serverless": "^1.72.5",
-    "@types/source-map-support": "^0.5.6",
-    "@types/uuid": "^9.0.1",
+    "@types/serverless": "^1.78.44",
     "fork-ts-checker-webpack-plugin": "^3.0.1",
     "serverless-webpack": "^5.11.0",
     "ts-loader": "^5.3.3",

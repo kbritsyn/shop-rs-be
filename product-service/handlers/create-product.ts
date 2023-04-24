@@ -3,7 +3,7 @@ import { DynamoDB } from 'aws-sdk';
 import { v4 as uuid } from 'uuid'
 import { tableName } from '../constants';
 import { Product } from '../database/product.model';
-import { defaultHeaders } from '../default-headers';
+import { defaultHeaders } from '../../default-headers';
 
 const dynamoClient = new DynamoDB.DocumentClient();
 

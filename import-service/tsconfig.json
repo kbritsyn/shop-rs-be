@@ -10,7 +10,7 @@
     "outDir": "lib",
     "strict": true
   },
-  "include": ["./**/*.ts", "../default-headers.ts"],
+  "include": ["./**/*.ts"],
   "exclude": [
     "node_modules/**/*",
     ".serverless/**/*",
