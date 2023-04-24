@@ -2,7 +2,7 @@ import { APIGatewayProxyHandler } from 'aws-lambda';
 import { DynamoDB } from 'aws-sdk';
 
 import { defaultHeaders } from '../../default-headers';
-import { tableName } from '../constants';
+import { PRODUCTS_TABLE_NAME } from '../constants';
 
 const dynamoClient = new DynamoDB.DocumentClient();
 
@@ -14,7 +14,7 @@ export const getProductById: APIGatewayProxyHandler = async (event) => {
         console.log('ID of requested product: ', productId);
 
         const result = await dynamoClient.get({
-            TableName: tableName,
+            TableName: PRODUCTS_TABLE_NAME,
             Key: { id: productId }
         }).promise();
 

@@ -1,6 +1,6 @@
 import { APIGatewayProxyHandler } from 'aws-lambda';
 import { DynamoDB } from 'aws-sdk';
-import { tableName } from '../constants';
+import { PRODUCTS_TABLE_NAME } from '../constants';
 import { defaultHeaders } from '../../default-headers';
 
 const dynamoClient = new DynamoDB.DocumentClient();
@@ -10,7 +10,7 @@ export const getAllProducts: APIGatewayProxyHandler = async (event) => {
 
     try {
         const result = await dynamoClient.scan({
-            TableName: tableName
+            TableName: PRODUCTS_TABLE_NAME
         }).promise();
 
         return {
