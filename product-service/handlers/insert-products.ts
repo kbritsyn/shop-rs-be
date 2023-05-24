@@ -1,6 +1,6 @@
 import { DynamoDB } from 'aws-sdk';
 import { v4 as uuid } from 'uuid'
-import { tableName } from '../constants';
+import { PRODUCTS_TABLE_NAME } from '../constants';
 import { products } from '../database/products';
 
 const dynamoClient = new DynamoDB.DocumentClient();
@@ -21,7 +21,7 @@ export const insertProducts = async () => {
     
         await dynamoClient.batchWrite({
             RequestItems: {
-                [tableName]: putRequestObjects,
+                [PRODUCTS_TABLE_NAME]: putRequestObjects,
             },
         }).promise();
     

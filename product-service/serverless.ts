@@ -38,6 +38,18 @@ const serverlessConfiguration: Serverless = {
             'dynamodb:BatchWriteItem'
           ],
           Resource: "arn:aws:dynamodb:${aws:region}:*:table/*"
+        }, {
+          Effect: 'Allow',
+          Action: 'sqs:*',
+          Resource: {
+            "Fn::GetAtt": ["SQSQueue", "Arn"]
+          }
+        }, {
+          Effect: 'Allow',
+          Action: 'sns:*',
+          Resource: {
+            Ref: 'SNSTopic'
+          }
         }]
       }
     }
@@ -96,6 +108,55 @@ const serverlessConfiguration: Serverless = {
           }
         }
       ]
+    },
+    catalogBatchProcess: {
+      handler: 'handler.catalogBatchProcess',
+      events: [{
+        sqs: {
+          batchSize: 5,
+          arn: {
+            "Fn::GetAtt": ["SQSQueue", "Arn"]
+          }
+        }
+      }]
+    }
+  },
+  resources: {
+    Resources: {
+      SQSQueue: {
+        Type: 'AWS::SQS::Queue',
+        Properties: {
+          QueueName: 'product-service-queue'
+        }
+      },
+      SNSTopic: {
+        Type: 'AWS::SNS::Topic',
+        Properties: {
+          TopicName: 'product-service-topic'
+        }
+      },
+      SNSSubscription: {
+        Type: 'AWS::SNS::Subscription',
+        Properties: {
+          Endpoint: 'kiril.britsyn@gmail.com',
+          Protocol: 'email',
+          TopicArn: {
+            Ref: 'SNSTopic'
+          }
+        }
+      }
+    },
+    Outputs: {
+      SQSUrl: {
+        Value: {
+          "Ref": "SQSQueue"
+        }
+      },
+      SQSArn: {
+        Value: {
+          "Fn::GetAtt": ["SQSQueue", "Arn"]
+        }
+      }
     }
   }
 }
