@@ -14,7 +14,7 @@ const serverlessConfiguration: Serverless = {
   plugins: ['serverless-webpack', 'serverless-dotenv-plugin'],
   provider: {
     name: 'aws',
-    runtime: 'nodejs12.x',
+    runtime: 'nodejs16.x',
     apiGateway: {
       minimumCompressionSize: 1024,
     },
@@ -77,7 +77,7 @@ const serverlessConfiguration: Serverless = {
           cors: true,
           authorizer: {
             name: 'tokenAuthorizer',
-            arn: '${cf.eu-west-1:authorization-service-dev.basicAuthorizerArn}',
+            arn: '${cf:authorization-service-dev.basicAuthorizerArn}',
             type: 'token',
             resultTtlInSeconds: 0,
             identitySource: 'method.request.header.Authorization'
